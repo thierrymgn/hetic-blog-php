@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+    francics-nginx:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8976:80"
+            - "8977:443"
+        restart: unless-stopped
+        volumes:
+            - ./src:/var/www/html
+
+    database:
+        image: mariadb
+        restart: always
+        volumes:
+            - ./database/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: data
+
+    phpmyadmin:
+        image: phpmyadmin
+        restart: always
+        ports:
+            - '8080:80'
+        environment:
+            - PMA_ARBITRARY=1
+
+volumes:
+    data:
